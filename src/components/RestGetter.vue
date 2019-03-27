@@ -4,59 +4,47 @@
       <div class="col-md-4 mt-2">
         <button
           class="btn btn-success btn-block"
-          @click="fetchDataFrom('https://css-tricks.com');"
-        >
-          csstricks.com
-        </button>
+          @click="fetchData('https://www.thecrazyprogrammer.com');"
+        >thecrazyprogrammer.com</button>
       </div>
       <div class="col-md-4 mt-2">
         <button
           class="btn btn-warning btn-block"
-          @click="fetchDataFrom('https://codecondo.com');"
-        >
-          codecondo.com
-        </button>
+          @click="fetchData('https://codecondo.com');"
+        >codecondo.com</button>
       </div>
       <div class="col-md-4 mt-2">
         <button
           class="btn btn-info btn-block"
-          @click="fetchDataFrom('https://blog.codepen.io');"
-        >
-          blog.codepen.io
-        </button>
+          @click="fetchData('https://blog.codepen.io');"
+        >blog.codepen.io</button>
       </div>
     </div>
-    <hr />
+    <hr>
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-12">
         <div class="row">
           <div class="col">
             <form @submit.prevent="fetchData">
               <div class="input-group mb-2">
                 <div class="input-group-prepend">
-                  <div class="input-group-text">Request from custom url:</div>
+                  <div class="input-group-text">Custom url:</div>
                 </div>
                 <input
                   type="text"
                   class="form-control"
                   id="inlineFormInputGroup"
                   v-model="fetchUrl"
-                />
+                >
               </div>
             </form>
           </div>
 
-          <div class="col-3">
-            <transition name="fade">
-              <button
-                class="btn btn-danger btn-block"
-                v-if="posts.length > 0"
-                @click="clearPosts"
-              >
-                Clear Posts
-              </button>
-            </transition>
-          </div>
+          <transition name="fade">
+            <div class="col-4" v-if="posts.length > 0">
+              <button class="btn btn-danger btn-block" @click="clearPosts">Clear Posts</button>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -75,18 +63,14 @@
           <h2 class="text-center">
             Posts From:
             {{
-              fetchUrl.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0]
+            fetchUrl.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0]
             }}
           </h2>
           <ul class="list-group p-3">
-            <li
-              class="list-group-item shadow"
-              :key="post"
-              v-for="post in posts.slice().reverse()"
-            >
+            <li class="list-group-item shadow" :key="index" v-for="(post, index) in posts.slice()">
               <h3>{{ post.title.rendered }}</h3>
               <p class="small">{{ post.date }}</p>
-              <p v-html="post.content.rendered">{{ post.content.rendered }}</p>
+              <p v-html="post.content.rendered"></p>
             </li>
           </ul>
         </div>
@@ -103,36 +87,16 @@ export default {
     return {
       posts: [],
       loading: false,
-      fetchUrl: "https://www.woo360.fun"
+      fetchUrl: "https://codecondo.com"
     };
   },
 
   methods: {
-    fetchData() {
-      this.loading = true;
+    fetchData(customUrl) {
+      if (customUrl) this.fetchUrl = customUrl;
       this.posts = [];
-      let url = this.fetchUrl + "/wp-json/wp/v2/posts";
-
-      this.$http
-        .get(url)
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          const resultArray = [];
-          for (let key in data) {
-            resultArray.push(data[key]);
-          }
-          this.posts = resultArray;
-          this.loading = false;
-        });
-    },
-
-    fetchDataFrom(customUrl) {
       this.loading = true;
-      this.posts = [];
-      this.fetchUrl = customUrl;
-      let url = customUrl + "/wp-json/wp/v2/posts";
+      const url = this.fetchUrl + "/wp-json/wp/v2/posts";
 
       this.$http
         .get(url)
@@ -150,30 +114,14 @@ export default {
     },
 
     clearPosts() {
-      setTimeout(() => {
-        this.posts = [];
-        this.loading = false;
-      }, 250);
+      this.posts = [];
+      this.loading = false;
     }
   },
 
   created: function() {
     this.loading = true;
-    let url = this.fetchUrl + "/wp-json/wp/v2/posts";
-
-    this.$http
-      .get(url)
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        const resultArray = [];
-        for (let key in data) {
-          resultArray.push(data[key]);
-        }
-        this.posts = resultArray;
-        this.loading = false;
-      });
+    this.fetchData();
   }
 };
 </script>
@@ -191,18 +139,6 @@ export default {
 }
 
 .fade-leave-active {
-  transition: 1s;
-  opacity: 0;
-}
-
-.fadeFast-enter {
-  opacity: 0;
-}
-.fadeFast-enter-active {
-  transition: 1s;
-}
-
-.fadeFast-leave-active {
   transition: 1s;
   opacity: 0;
 }

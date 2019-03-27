@@ -1,5 +1,5 @@
 {
-  "name": "vue-udemy",
+  "name": "vue-resource-wp-post-scraper",
   "description": "A Vue.js project",
   "version": "1.0.0",
   "author": "Adam Whitlock <adam.whitlock627@gmail.com>",
@@ -34,5 +34,6 @@
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"
-  }
+  },
+  "keywords": []
 }
